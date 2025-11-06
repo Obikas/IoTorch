@@ -1,0 +1,8 @@
+/home/doug/IoTorch/linux-mctp/mctp-bridge/build/CMakeFiles/mctp-bridge.dir
+/home/doug/IoTorch/linux-mctp/mctp-bridge/build/CMakeFiles/install-app.dir
+/home/doug/IoTorch/linux-mctp/mctp-bridge/build/CMakeFiles/edit_cache.dir
+/home/doug/IoTorch/linux-mctp/mctp-bridge/build/CMakeFiles/rebuild_cache.dir
+/home/doug/IoTorch/linux-mctp/mctp-bridge/build/CMakeFiles/list_install_components.dir
+/home/doug/IoTorch/linux-mctp/mctp-bridge/build/CMakeFiles/install.dir
+/home/doug/IoTorch/linux-mctp/mctp-bridge/build/CMakeFiles/install/local.dir
+/home/doug/IoTorch/linux-mctp/mctp-bridge/build/CMakeFiles/install/strip.dir
