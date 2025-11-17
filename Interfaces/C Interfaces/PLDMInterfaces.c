@@ -69,7 +69,7 @@ typedef struct { int dummy; } Log;
 // Used to define changes to the hardware or configurations
 typedef struct { int dummy; } HardwareConfigChange;
 
-
+//Represents 
 typedef struct { int dummy; } ParsedMessage;
 typedef struct { int dummy; } PLDMRequest;
 typedef struct { int dummy; } PLDMResponse;
@@ -81,8 +81,11 @@ typedef enum { MESSAGE_TYPE_UNKNOWN } MessageType;
 typedef enum { PLDM_TYPE_UNKNOWN } PLDMType;
 
 
-// IExternalCommunicator 
-
+/* IExternalCommunicator
+    PLDM server needs to be able to recieve communication from outside sources.
+    Server needs to be able to access the control and monitoring system, and parse
+    through information sent to (and from) those systems.
+*/ 
 typedef struct IExternalCommunicator {
     // Recieve incoming data from an external source
     void (*receiveMessage)(struct IExternalCommunicator *self, ByteBuffer *data);
@@ -97,8 +100,13 @@ typedef struct IExternalCommunicator {
     void (*sendAcknowledge)(struct IExternalCommunicator *self, MessageID *id, Status *status);
 } IExternalCommunicator;
 
-// EventCommunicationAgent
-
+/* EventCommunicationAgent
+    Needs to have methods for handling event notifications, state changes
+    fault conditions, and sensor threshold crossings. Needs to have a queue for 
+    handling asynchronus information. Needs to be able to update information in 
+    real-time, and monitor internal systems to match given specifications. Needs 
+    capabilities for retries, and data transfer in lossy or noisy enviroments.
+*/
 typedef struct EventCommunicationAgent {
     // Add an event to the queue to be processed
     void (*enqueueEvent)(struct EventCommunicationAgent *self, EventData *event);
@@ -125,8 +133,12 @@ typedef struct EventCommunicationAgent {
     bool (*reliableSend)(struct EventCommunicationAgent *self, ByteBuffer *payload);
 } EventCommunicationAgent;
 
-// ControlAndMonitoring
-
+/* ControlAndMonitoring
+    Needs to have a function to collect sensor data, monitor system statuses,
+    send information to GPIO's, actuators, and power rails. Needs to have functionality
+    to recieve information from the client (via the server) to work with it. Needs to have
+    functionality to modify the hardware.
+*/
 typedef struct ControlAndMonitoring {
     // Returns a specific set of sensor data to us 
     SensorData (*readSensor)(struct ControlAndMonitoring *self, SensorID *id);
@@ -143,7 +155,7 @@ StructureParser
     // Handles GPIO control
     void (*toggleGPIO)(struct ControlAndMonitoring *self, GPIOPin *pin, bool enabled);
     
-    // Handles hardware control for a powerrail
+    // Handles hardware control for a power rail
     void (*setPowerRail)(struct ControlAndMonitoring *self, PowerRailID *id, PowerState state);
     
     // Handles commands that come in from the client
@@ -159,12 +171,18 @@ StructureParser
     Log (*getSystemLogs)(struct ControlAndMonitoring *self, Log *inputLog);
 } ControlAndMonitoring;
 
-// StructureHandler
+/* StructureHandler
+    System needs to be able to handle different structure types and break down
+    raw messages.
+*/
 typedef struct StructureHandler {
     ParsedMessage (*handle)(struct StructureHandler *self, ByteBuffer *rawMessage);
 } StructureHandler;
 
-// StructureParser
+/* StructureParser
+    System needs to be able to handle different structure types and break down and
+    reform the messages into understandable formats.
+*/
 typedef struct StructureParser {
     // Convert raw input into structured internal representation
     ParsedMessage (*parseMessage)(struct StructureParser *self, ByteBuffer *rawData);
@@ -180,12 +198,14 @@ typedef struct StructureParser {
 } StructureParser;
 
 // PLDMCapabilityHandler
-
 typedef struct PLDMCapabilityHandler {
+    // Gets the type of the PLDM command for handling support
     PLDMType (*getCapabilityType)(struct PLDMCapabilityHandler *self);
+   
+    // Executes a PLDM request and returns the appropriate response
     PLDMResponse (*handleCommand)(struct PLDMCapabilityHandler *self, PLDMRequest *request);
     
-    //  For simplicity, we use fixed-size array here
+    //  Get a list of supported command identifiers
     PLDMCommand *(*getSupportedCommands)(struct PLDMCapabilityHandler *self, size_t *count);
 } PLDMCapabilityHandler;
 
